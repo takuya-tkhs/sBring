@@ -1,5 +1,6 @@
 #include<vector>
 #include<math.h>
+#include<queue>
 #include<iostream>
 #include"global_variables.h"
 #include"parameter_set.h"
@@ -7,6 +8,36 @@ using namespace std;
 
 void Parameter_Set::initialize_G(const vector<vector<int>>& mat){
     G = mat;
+}
+
+
+//This function initializes G using the shortest path algorithm (BFS).
+//Given a tentative origin, each node i learns from a node j such that j is in the shortest path from i to the tentative origin.
+void Parameter_Set::initialize_G_by_shortest_path(int tentative_origin){
+    //i-th element is i's neighbour which is in the shortest path from i to the tentative origin.
+    vector<int> shortest_path_neighbour(N, -1);
+    shortest_path_neighbour.at(tentative_origin) = tentative_origin;
+
+    queue<int> queue_of_nodes;
+    queue_of_nodes.push(tentative_origin);
+
+    //Breadth first search
+    while(!queue_of_nodes.empty()){
+        int i = queue_of_nodes.front();
+        queue_of_nodes.pop();
+        for(auto & j : network::adjacency_list.at(i)){
+            if(shortest_path_neighbour.at(j) == -1){  //not visited yet.
+                shortest_path_neighbour.at(j) = i;
+                queue_of_nodes.push(j);
+            }
+        }
+    }
+
+    //initialize G.
+    G = vector<vector<int>>(T, vector<int>(M, -1));
+    for(int t = 0; t < T; t++){
+        G.at(t) = shortest_path_neighbour;
+    }
 }
 
 

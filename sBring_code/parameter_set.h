@@ -15,6 +15,7 @@ struct Parameter_Set{
     double log_posterior;
 
     void initialize_G(const vector<vector<int>>& mat);
+    void initialize_G_by_shortest_path(int tentative_origin);
     void sample_origin(double rand_unif);
     void output_parameters(int sample_id);
 };

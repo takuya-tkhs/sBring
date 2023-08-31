@@ -1,11 +1,11 @@
 #include<vector>
 #include<random>
 #include<math.h>
+#include<iostream>
 #include"global_variables.h"
 #include"parameter_set.h"
 #include"tree_set.h"
 #include"mcmc.h"
-#include"csv_input.h"  //to be deleted later. (only for debugging)
 using namespace std;
 
 vector<Parameter_Set> mcmc(int seed){
@@ -17,7 +17,8 @@ vector<Parameter_Set> mcmc(int seed){
     Parameter_Set last_parameter;
     vector<Parameter_Set> sampled_parameters(num_sample);
     int current_sample_id = 0;
-    last_parameter.G = input_from_csv_int("tmp.csv", 0);
+    last_parameter.initialize_G_by_shortest_path(rand_int(random) % N);
+
     last_parameter.loss_rate = (min_loss_rate + max_loss_rate) / 2.0;
     last_parameter.log_posterior = - INFINITY;
 
