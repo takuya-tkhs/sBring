@@ -69,3 +69,21 @@ vector<vector<int>> input_from_csv_int(string file_name, int num_header){
 
 	return(result);
 }
+
+
+//input from a CSV file. Create a matrix of double.
+vector<vector<double>> input_from_csv_double(string file_name, int num_header){
+	vector<vector<string>> input_string_matrix = input_from_csv(file_name, num_header);
+	int num_rows = input_string_matrix.size();
+
+	vector<vector<double>> result(num_rows, vector<double>(0));
+	for(int i = 0; i < num_rows; i++){
+		int num_cols = input_string_matrix.at(i).size();
+		result.at(i).resize(num_cols);
+		for(int j = 0; j < num_cols; j++){
+			result.at(i).at(j) = stod(input_string_matrix.at(i).at(j));
+		}
+	}
+
+	return(result);
+}

@@ -12,10 +12,14 @@ struct Parameter_Set{
     int origin_node;
 
     TreeSet trees;
+
+    double log_G_prior;  //P(G) (logarithm)
+    double log_likelihood;  //P(Y|G, loss_rate) (logarithm)
     double log_posterior;
 
     void initialize_G(const vector<vector<int>>& mat);
     void initialize_G_by_shortest_path(int tentative_origin);
+    void initialize_log_G_prior();
     void sample_origin(double rand_unif);
     void output_parameters(int sample_id);
 };

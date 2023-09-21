@@ -14,7 +14,8 @@ namespace data{
 }
 
 namespace network{
-    extern vector<vector<int>> adjacency_matrix;
+    extern vector<vector<double>> weighted_adjacency_matrix;  //weighted_adjacency_matrix.
+    extern vector<vector<double>> log_weighted_adjacency_matrix;  //logarithm (base 10).
     extern vector<vector<int>> adjacency_list;  //self loop not included in the list.
     extern vector<int> node_degrees;  //self loop not counted.
 }
@@ -27,6 +28,6 @@ extern long long num_sample, length_interval, length_burnin, num_iteration;
 
 //functions to initialize global variables.
 void initialize_dataset(const vector<int>& dataset);
-void initialize_network(const vector<vector<int>>& adj_matrix);
+void initialize_network(const vector<vector<double>>& adj_matrix);
 
 #endif

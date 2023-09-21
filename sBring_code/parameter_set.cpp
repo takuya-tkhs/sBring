@@ -41,6 +41,19 @@ void Parameter_Set::initialize_G_by_shortest_path(int tentative_origin){
 }
 
 
+//This function initializes P(G) based on the initial value of G.
+//This function is used at the first step of the inference.
+void Parameter_Set::initialize_log_G_prior(){
+    log_G_prior = 0.0;
+    for(int t = 0; t < T; t++){
+        for(int i = 0; i < N; i++){
+            int j = G.at(t).at(i);
+            log_G_prior += network::log_weighted_adjacency_matrix.at(i).at(j);
+        }
+    }
+}
+
+
 //This function draw a sample of origin_time and origin_node.
 //The tree must be cut out, and the likelihood must be computed before this function is called.
 //rand_unif: random value (double) from 0 to 1.
@@ -103,5 +116,7 @@ void Parameter_Set::output_parameters(int sample_id){
     << "   Loss Rate: " << to_string(loss_rate)
     << "   Origin Time: "  << to_string(origin_time)
     << "   Origin Node ID: "  << to_string(origin_node)
-    << "   Log Posterior: "  << to_string(log_posterior)  << endl;  
+    << "   Log Prior: "  << to_string(log_G_prior)
+    << "   Log Likelihood: "  << to_string(log_likelihood)
+    << "   Log Posterior: "  << to_string(log_posterior)  << endl;
 }

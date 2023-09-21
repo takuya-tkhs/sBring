@@ -18,8 +18,11 @@ vector<Parameter_Set> mcmc(int seed){
     vector<Parameter_Set> sampled_parameters(num_sample);
     int current_sample_id = 0;
     last_parameter.initialize_G_by_shortest_path(rand_int(random) % N);
+    last_parameter.initialize_log_G_prior();
 
     last_parameter.loss_rate = (min_loss_rate + max_loss_rate) / 2.0;
+
+    //set the initial posterior to - Inf, so that the first step of the MH-algorithm is always accepted.
     last_parameter.log_posterior = - INFINITY;
 
     for(long long itr = 0; itr < num_iteration; itr++){
@@ -36,10 +39,16 @@ vector<Parameter_Set> mcmc(int seed){
         for(int i = 0; i < num_G_change; i++){
             int change_time = rand_int(random) % T;
             int change_node = rand_int(random) % N;
-            int tmp = rand_int(random) % (network::node_degrees.at(change_node) + 1);  //neighbours plus self.
+            int tmp = rand_int(random) % network::node_degrees.at(change_node);
+
+            int new_model = network::adjacency_list.at(change_node).at(tmp);
+            int old_model = proposed_parameter.G.at(change_time).at(change_node);
+
+            //update prior P(G).
+            proposed_parameter.log_G_prior += network::log_weighted_adjacency_matrix.at(change_node).at(new_model);
+            proposed_parameter.log_G_prior -= network::log_weighted_adjacency_matrix.at(change_node).at(old_model);
 
             //assign the new element to the G matrix.
-            int new_model = (tmp < network::node_degrees.at(change_node) ? network::adjacency_list.at(change_node).at(tmp) : change_node);
             proposed_parameter.G.at(change_time).at(change_node) = new_model;
         }
 
@@ -51,10 +60,12 @@ vector<Parameter_Set> mcmc(int seed){
             //compute the tree likelihood.
             proposed_parameter.trees.compute_likelihood(proposed_parameter.loss_rate);
             //recalculate the posterior probability.
-            proposed_parameter.log_posterior = log10(proposed_parameter.trees.tree_likelihood);
+            proposed_parameter.log_likelihood = log10(proposed_parameter.trees.tree_likelihood);
         }else{  //if the main tree does not exist...
-            proposed_parameter.log_posterior = - INFINITY;
+            proposed_parameter.log_likelihood = - INFINITY;
         }
+
+        proposed_parameter.log_posterior = proposed_parameter.log_G_prior + proposed_parameter.log_likelihood;
 
         //acceptance or rejection?
         double acceptance_ratio = pow(10, proposed_parameter.log_posterior - last_parameter.log_posterior);
