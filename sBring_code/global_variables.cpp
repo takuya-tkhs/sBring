@@ -12,6 +12,7 @@ vector<int> data::known_node_list;
 int data::num_state_one;
 
 vector<vector<double>> network::weighted_adjacency_matrix;
+vector<vector<double>> network::accu_weighted_adjacency_matrix;
 vector<vector<double>> network::log_weighted_adjacency_matrix;
 vector<vector<int>> network::adjacency_list;
 vector<int> network::node_degrees;
@@ -57,6 +58,16 @@ void initialize_network(const vector<vector<double>>& adj_matrix){
         }
         for(int j = 0; j < N; j++){
             network::weighted_adjacency_matrix.at(i).at(j) = adj_matrix.at(i).at(j) / sum_weight;
+        }
+    }
+
+    //initialize the accumulated weighted adjacency matrix.
+    network::accu_weighted_adjacency_matrix = vector<vector<double>>(N, vector<double>(N, 0.0));
+    for(int i = 0; i < N; i++){
+        network::accu_weighted_adjacency_matrix.at(i).at(0) = network::weighted_adjacency_matrix.at(i).at(0);
+        for(int j = 1; j < N; j++){
+            network::accu_weighted_adjacency_matrix.at(i).at(j) =
+                network::accu_weighted_adjacency_matrix.at(i).at(j-1) + network::weighted_adjacency_matrix.at(i).at(j);
         }
     }
 

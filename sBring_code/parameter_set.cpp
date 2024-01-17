@@ -34,7 +34,7 @@ void Parameter_Set::initialize_G_by_shortest_path(int tentative_origin){
     }
 
     //initialize G.
-    G = vector<vector<int>>(T, vector<int>(M, -1));
+    G = vector<vector<int>>(T, vector<int>(N, -1));
     for(int t = 0; t < T; t++){
         G.at(t) = shortest_path_neighbour;
     }
@@ -119,4 +119,26 @@ void Parameter_Set::output_parameters(int sample_id){
     << "   Log Prior: "  << to_string(log_G_prior)
     << "   Log Likelihood: "  << to_string(log_likelihood)
     << "   Log Posterior: "  << to_string(log_posterior)  << endl;
+}
+
+
+/////Side functions
+
+//samples the node from which the learner copies the state.
+//learner_id : 0 ~ N-1
+//p: random variable sampled from Uniform(0, 1)
+int learn(int learner_id, double p){
+    int model_l = 0;
+    int model_r = N - 1;
+
+    while(model_l != model_r){
+        int model_c = (model_l + model_r) / 2;
+        if(p < network::accu_weighted_adjacency_matrix.at(learner_id).at(model_c)){
+            model_r = model_c;
+        }else{
+            model_l = model_c + 1;
+        }
+    }
+
+    return(model_l);
 }

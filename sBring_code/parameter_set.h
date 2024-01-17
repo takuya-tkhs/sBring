@@ -24,4 +24,6 @@ struct Parameter_Set{
     void output_parameters(int sample_id);
 };
 
+int learn(int learner_id, double p);
+
 #endif

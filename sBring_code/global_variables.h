@@ -15,6 +15,7 @@ namespace data{
 
 namespace network{
     extern vector<vector<double>> weighted_adjacency_matrix;  //weighted_adjacency_matrix.
+    extern vector<vector<double>> accu_weighted_adjacency_matrix;  //accumulated weighted_adjacency_matrix.
     extern vector<vector<double>> log_weighted_adjacency_matrix;  //logarithm (base 10).
     extern vector<vector<int>> adjacency_list;  //self loop not included in the list.
     extern vector<int> node_degrees;  //self loop not counted.

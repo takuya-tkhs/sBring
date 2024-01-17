@@ -22,8 +22,8 @@ vector<Parameter_Set> mcmc(int seed){
 
     last_parameter.loss_rate = (min_loss_rate + max_loss_rate) / 2.0;
 
-    //set the initial posterior to - Inf, so that the first step of the MH-algorithm is always accepted.
-    last_parameter.log_posterior = - INFINITY;
+    //set the initial likelihood to - Inf, so that the first step of the MH-algorithm is always accepted.
+    last_parameter.log_likelihood = - INFINITY;
 
     for(long long itr = 0; itr < num_iteration; itr++){
         //copy the last parameter set.
@@ -39,9 +39,8 @@ vector<Parameter_Set> mcmc(int seed){
         for(int i = 0; i < num_G_change; i++){
             int change_time = rand_int(random) % T;
             int change_node = rand_int(random) % N;
-            int tmp = rand_int(random) % network::node_degrees.at(change_node);
 
-            int new_model = network::adjacency_list.at(change_node).at(tmp);
+            int new_model = learn(change_node, rand_real(random));  //sample from the prior distribution.
             int old_model = proposed_parameter.G.at(change_time).at(change_node);
 
             //update prior P(G).
@@ -67,18 +66,20 @@ vector<Parameter_Set> mcmc(int seed){
 
         proposed_parameter.log_posterior = proposed_parameter.log_G_prior + proposed_parameter.log_likelihood;
 
-        //acceptance or rejection?
-        double acceptance_ratio = pow(10, proposed_parameter.log_posterior - last_parameter.log_posterior);
+        //acceptance or rejection? (ratio of likelihood instead of posterior probability)
+        double acceptance_ratio = pow(10, proposed_parameter.log_likelihood - last_parameter.log_likelihood);
         if(rand_real(random) < acceptance_ratio){
             last_parameter = proposed_parameter;
         }
 
-        if(itr >= length_burnin && itr % length_interval == 0){
-            last_parameter.sample_origin(rand_real(random));  //sample origin_time & origin_node
-            sampled_parameters.at(current_sample_id) = last_parameter;
+        if(itr % length_interval == 0){
             last_parameter.output_parameters(current_sample_id);
 
-            current_sample_id += 1;
+            if(itr >= length_burnin){
+                last_parameter.sample_origin(rand_real(random));  //sample origin_time & origin_node
+                sampled_parameters.at(current_sample_id) = last_parameter;
+                current_sample_id += 1;
+            }
         }
     }
 
