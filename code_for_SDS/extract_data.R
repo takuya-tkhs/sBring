@@ -18,7 +18,7 @@ for(var_name in variant_names){
   
   for(i in 1:num_data_points){
     loc_id <- which(sds_network$SDS_CODE == data$SDS_CODE[i])
-    data.vec[loc_id] <- data_mat[i, var_name]
+    data.vec[loc_id] <- as.numeric(data_mat[i, var_name])
   }
   
   output_file_name <- paste(data_file_name, "_", var_name, ".csv", sep = "")

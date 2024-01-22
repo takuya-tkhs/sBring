@@ -25,4 +25,4 @@ for(i in 1:num_location){
 }
 
 write.csv(transmission_rate_mat, "weighted_adj_mat.csv",
-          row.names = F, col.names = F)
+          row.names = F)

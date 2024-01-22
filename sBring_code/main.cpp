@@ -16,7 +16,7 @@ int main(){
     cin >> network_file_name;
 
     initialize_dataset(input_from_csv_int(data_file_name, 1).at(0));
-    initialize_network(input_from_csv_double(network_file_name, 0));
+    initialize_network(input_from_csv_double(network_file_name, 1));
 
     //mcmc
     cout << "Input the value of T." << endl;
