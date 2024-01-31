@@ -3,12 +3,12 @@ library(sf)
 library(tidyverse)
 
 location_file_name <- "ortsnetz.txt"
-gamma <- 0.1
+gamma <- 10 ^ 4  #i.e., 10 km
 
 sds_network <- fread(location_file_name, encoding = "UTF-8")
 num_location <- nrow(sds_network)
 
-sds_network_sf <- st_as_sf(sds_network, coords = c("LONG", "LAT"), crs = 2056)
+sds_network_sf <- st_as_sf(sds_network, coords = c("LONG", "LAT"), crs = 4326)
 
 #create dist_matrix without units
 sds_dist_mat_tmp <- st_distance(sds_network_sf)

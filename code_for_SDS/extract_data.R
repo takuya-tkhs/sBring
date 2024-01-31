@@ -23,4 +23,13 @@ for(var_name in variant_names){
   
   output_file_name <- paste(data_file_name, "_", var_name, ".csv", sep = "")
   write.csv(t(data.vec), output_file_name, row.names = F)
+  
+  sds_network <- cbind(sds_network, data.vec)
+  tmp.colnames <- colnames(sds_network)
+  tmp.colnames[length(tmp.colnames)] <- var_name
+  colnames(sds_network) <- tmp.colnames
 }
+
+sds_network_sf <- st_as_sf(sds_network, coords = c("LONG", "LAT"), crs = 4326)
+
+plot(sds_network_sf, max.plot = ncol(sds_network_sf))
