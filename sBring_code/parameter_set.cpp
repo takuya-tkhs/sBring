@@ -111,8 +111,9 @@ void Parameter_Set::sample_origin(double rand_unif){
 
 
 //output parameters on the screen.
-void Parameter_Set::output_parameters(int sample_id){
-    cout << "Sample ID: "  << to_string(sample_id)
+void Parameter_Set::output_parameters(int itr, int sample_id){
+    cout << "Iteration: "  << to_string(itr)
+    << "   Sample ID: "  << to_string(sample_id)
     << "   Loss Rate: " << to_string(loss_rate)
     << "   Origin Time: "  << to_string(origin_time)
     << "   Origin Node ID: "  << to_string(origin_node)

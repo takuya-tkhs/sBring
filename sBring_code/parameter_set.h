@@ -21,7 +21,12 @@ struct Parameter_Set{
     void initialize_G_by_shortest_path(int tentative_origin);
     void initialize_log_G_prior();
     void sample_origin(double rand_unif);
-    void output_parameters(int sample_id);
+    void output_parameters(int itr, int sample_id);
+
+    Parameter_Set(){
+        origin_time = -1;
+        origin_node = -1;
+    }
 };
 
 int learn(int learner_id, double p);

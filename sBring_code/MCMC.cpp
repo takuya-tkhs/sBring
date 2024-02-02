@@ -16,7 +16,7 @@ vector<Parameter_Set> mcmc(int seed){
 
     Parameter_Set last_parameter;
     vector<Parameter_Set> sampled_parameters(num_sample);
-    int current_sample_id = 0;
+    int current_sample_id = -1;
     last_parameter.initialize_G_by_shortest_path(rand_int(random) % N);
     last_parameter.initialize_log_G_prior();
 
@@ -73,13 +73,13 @@ vector<Parameter_Set> mcmc(int seed){
         }
 
         if(itr % length_interval == 0){
-            last_parameter.output_parameters(current_sample_id);
-
             if(itr >= length_burnin){
+                current_sample_id += 1;  //count up. The first sample is ID 0.
                 last_parameter.sample_origin(rand_real(random));  //sample origin_time & origin_node
                 sampled_parameters.at(current_sample_id) = last_parameter;
-                current_sample_id += 1;
             }
+
+            last_parameter.output_parameters(itr, current_sample_id);
         }
     }
 
