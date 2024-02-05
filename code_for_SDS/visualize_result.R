@@ -4,10 +4,10 @@ library(tidyverse)
 library(rnaturalearth)
 
 
-MCMC_result_file_name <- "ZZZ_T50_sigma10_naa.csv"
+MCMC_result_file_name <- "result1_nei"
 location_file_name <- "ortsnetz.txt"
 
-MCMC_result <- fread(MCMC_result_file_name, encoding = "UTF-8")
+MCMC_result <- fread(paste(MCMC_result_file_name, ".csv", sep = ""), encoding = "UTF-8")
 sds_network <- fread(location_file_name, encoding = "UTF-8")
 
 num_location <- nrow(sds_network)
@@ -37,3 +37,18 @@ ggplot() + geom_sf(data = switzerland_sf) +
   geom_sf(data = sds_network_sf, aes(color = freq_origin_by_loc)) +
   scale_colour_gradient(low = "blue", high = "red") +
   theme_minimal()
+
+ggsave(paste(MCMC_result_file_name, "_origin_space.jpg", sep = ""))
+
+
+ggplot(MCMC_result, aes(x = origin_time)) + 
+  geom_histogram(aes(y=after_stat(density)), color="black", fill="lightblue")+
+  geom_density(alpha = 0.5, fill="#FF6666")
+
+ggsave(paste(MCMC_result_file_name, "_origin_time.jpg", sep = ""))
+
+ggplot(MCMC_result, aes(x = loss_rate)) + 
+  geom_histogram(aes(y=after_stat(density)), color="black", fill="lightblue")+
+  geom_density(alpha = 0.5, fill="#FF6666")
+
+ggsave(paste(MCMC_result_file_name, "_loss_rate.jpg", sep = ""))
