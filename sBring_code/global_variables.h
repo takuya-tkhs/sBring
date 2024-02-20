@@ -21,6 +21,11 @@ namespace network{
     extern vector<int> node_degrees;  //self loop not counted.
 }
 
+namespace prior{
+    extern vector<double> origin_time_prior;  //length T + 1 (including origin time 0)
+    extern vector<double> origin_node_prior;  //length N
+}
+
 extern double min_loss_rate, max_loss_rate, change_loss_rate;
 extern int num_G_change;
 
@@ -30,5 +35,7 @@ extern long long num_sample, length_interval, length_burnin, num_iteration;
 //functions to initialize global variables.
 void initialize_dataset(const vector<int>& dataset);
 void initialize_network(const vector<vector<double>>& adj_matrix);
+void initialize_origin_time_prior(int t_min, int T);
+void initialize_origin_node_prior(int N);
 
 #endif

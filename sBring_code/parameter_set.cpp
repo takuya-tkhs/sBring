@@ -58,23 +58,6 @@ void Parameter_Set::initialize_log_G_prior(){
 //The tree must be cut out, and the likelihood must be computed before this function is called.
 //rand_unif: random value (double) from 0 to 1.
 void Parameter_Set::sample_origin(double rand_unif){
-    //Trace the lineage.
-    vector<int> spatial_node_main_lineage(T + 1, -1);  //This vector records to which node the main lineage belonged at each timestep t.
-    int lineage_node = trees.spatial_node.at(trees.lca_state_one);
-    int lineage_time = trees.time_from_present.at(trees.lca_state_one);
-    while(true){
-        spatial_node_main_lineage.at(lineage_time) = lineage_node;
-
-        if(lineage_time == T){
-            break;
-        }else{
-            lineage_node = G.at(lineage_time).at(lineage_node);
-            lineage_time += 1;
-        }
-    }
-
-    //computation of likelihood.
-
     //P(Y|tree, loss_rate, origin_time, origin_space)P(origin_time)P(origin_space). Index: time 0..T (time before present)
     vector<double> likelihood_by_origin_time(T + 1, 0.0);
 
@@ -86,7 +69,8 @@ void Parameter_Set::sample_origin(double rand_unif){
 
         for(int t = current_node_time; t < parent_node_time; t++){
             likelihood_by_origin_time.at(t) 
-            = trees.prob_data_given_state_one.at(current_node) * pow(1 - loss_rate, t - current_node_time) / (T + 1) / N;
+            = trees.prob_data_given_state_one.at(current_node) * pow(1 - loss_rate, t - current_node_time)
+            * prior::origin_time_prior.at(t) * prior::origin_node_prior.at(trees.spatial_node_main_lineage.at(t));
         }
 
         if(current_node == trees.main_tree_root){
@@ -103,7 +87,7 @@ void Parameter_Set::sample_origin(double rand_unif){
         cummulative_normalized_likelihood_by_origin_time += likelihood_by_origin_time.at(t) / trees.tree_likelihood;
         if(rand_unif < cummulative_normalized_likelihood_by_origin_time){  //sampling.
             origin_time = t;
-            origin_node = spatial_node_main_lineage.at(t);
+            origin_node = trees.spatial_node_main_lineage.at(t);
             break;
         }
     }

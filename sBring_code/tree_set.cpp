@@ -2,6 +2,7 @@
 #include<unordered_map>
 #include<queue>
 #include<math.h>
+#include<iostream>  //for debug
 #include"tree_set.h"
 #include"global_variables.h"
 using namespace std;
@@ -100,6 +101,20 @@ void TreeSet::create_treeset_from_G(const vector<vector<int>>& G){
         }
     }
 
+    //Specify the possible node origin given origin time.
+    spatial_node_main_lineage = vector<int>(T + 1, -1);
+    int current_spatial_node;
+    for(int t = 0; t < T + 1; t++){
+        if(t < time_from_present.at(lca_state_one)){  //impossible to originate in the first place.
+            current_spatial_node = -1;
+        }else if(t == time_from_present.at(lca_state_one)){
+            current_spatial_node = spatial_node.at(lca_state_one);
+        }else{
+            current_spatial_node = G.at(t-1).at(current_spatial_node);  //update recursively.
+        }
+        spatial_node_main_lineage.at(t) = current_spatial_node;
+    }
+
     return;
 }
 
@@ -148,17 +163,25 @@ void TreeSet::compute_likelihood(double loss_rate){
     int current_node = lca_state_one;
     while(true){
         int parent_node = parent.at(current_node);
-        int current_branch_length 
-        = (current_node != main_tree_root ? branch_length_to_parent.at(current_node) : T + 1 - time_from_present.at(current_node));
+        int parent_time_from_present;
+        if(parent_node != -1){
+            parent_time_from_present = time_from_present.at(parent_node);
+        }else{
+            parent_time_from_present = T + 1;
+        }
 
-        tree_likelihood += prob_data_given_state_one.at(current_node) 
-        / loss_rate * (1 - pow(1 - loss_rate, current_branch_length)) / (T + 1) / N;
+        for(int t = time_from_present.at(current_node); t < parent_time_from_present; t++){
+            tree_likelihood += prob_data_given_state_one.at(current_node) 
+            * pow(1 - loss_rate, t - time_from_present.at(current_node))
+            * prior::origin_time_prior.at(t)
+            * prior::origin_node_prior.at(spatial_node_main_lineage.at(t));
+        }
 
         if(current_node == main_tree_root){
             break;
         }else{
             current_node = parent_node;
-        }
+        }        
     }
 }
 

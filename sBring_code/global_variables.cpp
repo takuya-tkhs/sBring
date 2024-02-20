@@ -17,6 +17,9 @@ vector<vector<double>> network::log_weighted_adjacency_matrix;
 vector<vector<int>> network::adjacency_list;
 vector<int> network::node_degrees;
 
+vector<double> prior::origin_time_prior;
+vector<double> prior::origin_node_prior;
+
 double min_loss_rate = 0.0, max_loss_rate = 1.0, change_loss_rate = 0.01;
 int num_G_change = 100;
 
@@ -95,4 +98,19 @@ void initialize_network(const vector<vector<double>>& adj_matrix){
             }
         }
     }
+}
+
+
+void initialize_origin_time_prior(int t_min, int T){
+    prior::origin_time_prior = vector<double>(T + 1, 0.0);
+    double prior_value = 1.0 / (T - t_min + 1);
+    for(int t = t_min; t < T + 1; t++){
+        prior::origin_time_prior.at(t) = prior_value;
+    }
+}
+
+
+void initialize_origin_node_prior(int N){
+    double prior_value = 1.0 / N;
+    prior::origin_node_prior = vector<double>(N, prior_value);
 }

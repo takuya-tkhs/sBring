@@ -26,6 +26,7 @@ struct TreeSet{
     vector<bool> is_main_tree;  //true if the node belongs to the main tree. (i.e. the tree which contains all the taxa with state 1)
     int main_tree_root;  //node ID assigned to the root of the main tree.
     int lca_state_one;  //node ID of the least common ancestor of state 1's.
+    vector<int> spatial_node_main_lineage; //possible origin node as a function of time [length: T + 1].
     vector<double> prob_data_given_state_one;  //result of pruning. probability of data in descendant leaves given state 1 at focal node.
     double tree_likelihood;  //P(data|tree, loss_rate)
 

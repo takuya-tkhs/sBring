@@ -18,9 +18,12 @@ int main(){
     initialize_dataset(input_from_csv_int(data_file_name, 1).at(0));
     initialize_network(input_from_csv_double(network_file_name, 1));
 
-    //mcmc
-    cout << "Input the value of T." << endl;
-    cin >> T;
+    int min_origin_time;
+    cout << "Input the minimum and maximum extreme of the origin time." << endl;
+    cin >> min_origin_time >> T;
+    initialize_origin_time_prior(min_origin_time, T);
+    initialize_origin_node_prior(N);
+
     cout << "Input the values of num_sample, length_burnin, and length_interval in this order." << endl;
     cin >> num_sample >> length_burnin >> length_interval;
 
