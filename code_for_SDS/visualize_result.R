@@ -4,8 +4,10 @@ library(tidyverse)
 library(rnaturalearth)
 
 
-MCMC_result_file_name <- "result1_nei"
+MCMC_result_file_name <- "result3_naa"
 location_file_name <- "ortsnetz.txt"
+
+num.years.by.timestep <- 20
 
 MCMC_result <- fread(paste(MCMC_result_file_name, ".csv", sep = ""), encoding = "UTF-8")
 sds_network <- fread(location_file_name, encoding = "UTF-8")
@@ -16,6 +18,9 @@ num_location <- nrow(sds_network)
 ################summerizing the result
 sample_size <- nrow(MCMC_result)
 freq_origin_by_loc <- rep(0, num_location)
+
+MCMC_result$origin_time <- MCMC_result$origin_time * num.years.by.timestep
+MCMC_result$loss_rate <- MCMC_result$loss_rate / num.years.by.timestep
 
 #increase the index by 1 (C++ -> R)
 MCMC_result$origin_node_id <- MCMC_result$origin_node_id + 1
