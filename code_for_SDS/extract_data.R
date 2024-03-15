@@ -1,6 +1,7 @@
 library(data.table)
 library(sf)
 library(tidyverse)
+library(rnaturalearth)
 
 data_file_name <- "5120_nein"
 location_file_name <- "ortsnetz.txt"
@@ -30,6 +31,22 @@ for(var_name in variant_names){
   colnames(sds_network) <- tmp.colnames
 }
 
+#visualization on the map
 sds_network_sf <- st_as_sf(sds_network, coords = c("LONG", "LAT"), crs = 4326)
+world_sf <- ne_countries(scale = "medium", returnclass = "sf")
+switzerland_sf <- world_sf %>% filter(name == "Switzerland")
+st_transform(switzerland_sf, crs = 2056) 
 
-plot(sds_network_sf, max.plot = ncol(sds_network_sf))
+for(var_name in variant_names){
+  tmp_sds_network <- sds_network[,c("LAT", "LONG", ..var_name)]
+  tmp_sds_network <- tmp_sds_network %>% filter(tmp_sds_network[,3] == 1)
+  tmp_sds_network_sf <- 
+    st_as_sf(tmp_sds_network, coords = c("LONG", "LAT"), crs = 4326)
+  
+  ggplot() + 
+    geom_sf(data = switzerland_sf) + 
+    geom_sf(data = tmp_sds_network_sf, col = "green") +
+    theme_minimal()
+  
+  ggsave(paste(data_file_name, "_", var_name, ".jpg", sep = ""))
+}
